@@ -36,6 +36,7 @@ def login_page(request):
         # breakpoint()
         #user1 = user.is_superuser
         if user and user.is_superuser:
+            login(request, user)
             return render(request, 'lmsadmin/home.html', {'user':user})         
         elif not user:
             messages.info(request, 'Try again! username or password is incorrect')
