@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <link rel="stylesheet" href='css/bootstrap.min.css'>
+    <link rel="stylesheet" href='css/font-awesome.min.css' >
+    
+</head>
+<body>
+    <center><h1>History of Issued Book</h1>
+   
+<table border="1" align="center" style="height:100px; width:500px;">
+    <tr style="color: red; text-align: center; " >
+        <th>Roll No</th>
+        <th>Student Name</th>
+        <th>Course</th>
+        <th>Issue Date</th>
+        <th>Expiry Date</th>
+        <th>Fine Date</th>
+        <th>Fine Amount</th>
+        
+        
+    </tr>
+
+    {% for issued_book in issued_book %}
+    <tr>
+        <th>{{issued_book.roll_no__roll_no}}</th>    
+        <th>{{issued_book.roll_no__user_id__first_name}}</th>  
+        <th>{{issued_book.roll_no__course_id__name}}</th> 
+        <th>{{issued_book.issue_date}}</th> 
+        <th>{{issued_book.expiry_date}}</th> 
+        <th>{{issued_book.fine__fine_date}}</th> 
+        <th>{{issued_book.fine__fine_amount}}</th> 
+       
+    </tr>
+    {% endfor %}
+</table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>studentprofile</title>
+</head>
+<body>
+ 
+    <h1 align="center"><u>Welcome {{user.get_full_name}}</u></h1>
+<table border="1" align="center" style="height: 100px; width:300px;">
+    <tr style="color: red; text-align: center;" >
+        <th>Username</th>
+        <th>Roll No</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Course</th>
+        <th>Action</th>
+    </tr>
+    
+    <tr>
+        <th>{{user.username}}</th>
+        <th>{{student.roll_no}}</th>
+        <th>{{user.email}}</th>
+        <th>{{student.mobile_number}}</th>
+        <th>{{user.first_name}}</th>
+        <th>{{user.last_name}}</th>
+        <th>{{student.course_id}}</th>
+        <th><a href="{% url 'profile_edit' %}">Update Profile</a></th>
+        
+    </tr>
+
+   
+
+</table>
+</body>
+</html>

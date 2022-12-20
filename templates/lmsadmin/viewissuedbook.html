@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>studentprofile</title>
+</head>
+<body>
+ 
+    
+
+    <h1 align="center"><u>Issued Book</u></h1>
+   <center>
+     <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'view_issued_book' %}">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form></center><br>  
+<table border="1" align="center" style="height: 100px; width:900px;">
+    <tr style="color: red; text-align: center;" >
+        <th>Issue id</th>
+        <th>Book</th>
+        <th>Issue Date</th>
+        <th>Expiry Date</th>
+        <th>Student Name</th>
+        <th>Course</th>
+        <th>Fine id</th>
+        <th>Fine Date</th>
+        <th>Fine Amount</th>
+    </tr>
+    {% for x in page_obj %} 
+    <tr>
+        <th>{{x.issue_id}}</th>
+        <th>{{x.book_id__name}}</th>
+        <th>{{x.issue_date}}</th>
+        <th>{{x.expiry_date}}</th> 
+        <th>{{x.roll_no__user_id__first_name}}</th> 
+        <th>{{x.roll_no__course_id__name}}</th> 
+        <th>{{x.fine__fine_id}}</th>
+        <th>{{x.fine__fine_date}}</th>
+        <th>{{x.fine__fine_amount}}</th>
+    </tr>
+    {% endfor %}
+</table>
+<br>
+<center><div  class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a> |
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a> |
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</center>
+</body>
+</html>

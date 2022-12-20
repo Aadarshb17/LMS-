@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>studentprofile</title>
+</head>
+<body>
+ 
+    <h1 align="center"><u>Welcome {{user.get_full_name}}</u></h1>
+
+    <h2 align="center"><u>Issued Book</u></h2>
+<table border="1" align="center" style="height: 100px; width:500px;">
+    <tr style="color: red; text-align: center;" >
+        <th>Issue id</th>
+        <th>Book Id</th>
+        <th>Issue Date</th>
+        <th>Expiry Date</th>
+        <th>Fine id</th>
+        <th>Fine Date</th>
+        <th>Fine Amount</th>
+    </tr>
+    {% for x in fine %} 
+    <tr>
+        <th>{{x.issue_id}}</th>
+        <th>{{x.book_id__name}}</th>
+        <th>{{x.issue_date}}</th>
+        <th>{{x.expiry_date}}</th> 
+        <th>{{x.fine__fine_id}}</th>
+        <th>{{x.fine__fine_date}}</th>
+        <th>{{x.fine__fine_amount}}</th>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

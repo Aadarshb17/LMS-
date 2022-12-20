@@ -1,0 +1,61 @@
+{% extends 'lmsadmin/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+<style media="screen">
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 24px;
+  line-height: 1.33;
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+}
+
+.jumbotron{
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.jumbotron h1{
+  text-align: center;
+}
+
+
+</style>
+ 
+ 
+    <center><h3 style=" margin-bottom: 0px;"class = 'alert alert-success'>Welcome to Online library !</h3></center>
+    <div class="jumbotron"   style="    margin-bottom: 0px;">
+    <h1 class="display-4">Hello {{user.get_full_name}} !</h1>
+    <p class="lead">As you are Admin, you can add a book to library, view available book in library,
+       Issue books to students,
+      View issued book to students and many more ... !
+
+    </p>
+    <hr class="my-4">
+    <center><h3>Options Available For You</h3> </center><br>
+    
+    <div class="options" style="text-align:center">
+      <a href="{% url 'book_form' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Book To Library</a><br><br>
+      <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Register Student</a><br><br>
+      <a href="{% url 'view_book' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">View Available Book</a><br><br>
+      <a href="{% url 'view_issued_book' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">View Issued Book</a><br><br>
+      <a href="{% url 'student_profile' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">View Student</a>
+    </div>
+
+    </div>
+
+ 
+{% endblock %}

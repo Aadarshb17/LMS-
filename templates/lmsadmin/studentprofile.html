@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>studentprofile</title>
+    
+</head>
+<body>
+ <center><h1>Registered Student</h1>
+
+ <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'student_profile' %}">
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form></center><br>
+
+<table border="1" align="center" style="height: 200px; width:400px;">
+    <tr style="color: red; text-align: center;" >
+        <th>Roll No</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Mobile Number</th>
+        <th>Course</th>
+        <th colspan="2">Action</th>
+    </tr>
+
+    {% for y in page_obj %}
+    <tr>
+        <th>{{y.roll_no}}</th> 
+        <th>{{y.user_id__username}}</th>    
+        <th>{{y.user_id__email}}</th>  
+        <th>{{y.user_id__first_name}}</th>
+        <th>{{y.user_id__last_name}}</th>
+        <th>{{y.mobile_number}}</th> 
+        <th>{{y.course_id__name}}</th> 
+        <th><a href="{% url 'student_profile_edit' y.roll_no %}">Update Profile</a></th> 
+        <th><a href="{% url 'delete_profile' y.roll_no %}">Delete record</a></th> 
+        
+    </tr>
+    {% endfor %}
+</table>
+<br> 
+<center><div  class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a> |
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a> |
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</center>
+</body>
+</html>

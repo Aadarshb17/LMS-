@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <link rel="stylesheet" href='css/bootstrap.min.css'>
+    <link rel="stylesheet" href='css/font-awesome.min.css' >
+    
+</head>
+<body>
+    <center><h1>Available Books in Library</h1>
+   
+  
+    <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'view_book' %}">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form></center><br>
+   
+
+   
+<table border="1" align="center" style="height:100px; width:700px; ">
+    <tr style="color: red; text-align: center; background-color: lightblue;" >
+        <th>Book Id</th>
+        <th>Author </th>
+        <th>Category </th>
+        <th>Name</th>
+        <th>ISBN Number</th>
+        <th>Publication</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th colspan="4">Action</th>
+    </tr>
+
+    {% for y in page_obj %}
+    <tr style="background-color: lightyellow;">
+        <th>{{y.book_id}}</th>    
+        <th>{{y.author_id}}</th>  
+        <th>{{y.category_id}}</th> 
+        <th>{{y.name}}</th>
+        <th>{{y.isbn_number}}</th>
+        <th>{{y.publication}}</th> 
+        <th>{{y.price}}</th> 
+        <th>{{y.quantity}}</th> 
+        <th> 
+            <a  href="{% url 'issue_book_form' y.book_id %}" >Issue to Student</a><br><br>   
+        </th>
+        <th>
+            <a  href="{% url 'book_update' y.book_id %}" >Update Book</a>
+        </th>
+        <th>
+            <a  href="{% url 'book_delete' y.book_id %}" >Delete Book</a>
+        </th>
+        <th>
+        <a  href="{% url 'book_history' y.book_id %}" >Show Book History</a>
+        </th>
+        
+    </tr>
+    {% endfor %}
+</table>
+<br>
+
+<center><div  class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a> |
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a> |
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</center>
+
+</body>
+</html>

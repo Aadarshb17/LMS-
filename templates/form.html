@@ -1,0 +1,7 @@
+<form method="post">
+    {% csrf_token %}
+    <div>{{form.first_name.label}} :: {{form.first_name}}</div>
+    <p>{{form.last_name.label}} :: {{form.last_name}}</p>
+    
+    <input type="submit" value="Submit">
+</form>

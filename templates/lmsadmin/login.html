@@ -1,0 +1,24 @@
+{% extends 'lmsadmin/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+<div class="login-page">
+  <div class="form">
+    <h3 class="login-title">LOGIN</h3>
+    <form method="POST" action="{% url 'login_page' %}">
+      {% csrf_token %}
+      <div class="input-group mb-3">
+        <input type="text" name="username" placeholder="Username..." class="form-control">
+      </div>
+      <div class="input-group mb-2">
+          <input type="password" name="password1" placeholder="Password..." class="form-control" >
+      </div>
+      <button type="submit"> Submit </button>
+      <p class="message">Don't have an account? <a href="{% url 'admin_signup' %}">Register</a></p>
+    </form>
+  </div>
+</div>
+  </form>
+{% endblock %}
