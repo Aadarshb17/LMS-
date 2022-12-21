@@ -59,7 +59,32 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
 
 
+class FineBookAdminSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Fine
+        fields = [        
+            'fine_date',
+            'fine_amount',
+            ] 
+
+        
+class IssueBookAdminSerializer(serializers.ModelSerializer): 
+    fine_set =  FineBookAdminSerializer(many=True, read_only= True)
+    class Meta:
+        model = IssuedBook
+        fields = [        
+            'book_id',
+            'roll_no',
+            'issue_date',
+            'expiry_date',
+            'fine_set',
+            ] 
     
+    def create(self, validated_data):
+        issuebook_data = validated_data.pop('fine_set')
+        issuebook = IssuedBook.objects.create(**validated_data)
+        return issuebook
+
 
     # def create(self, validated_data):
     #     admin_data = validated_data.pop('student')

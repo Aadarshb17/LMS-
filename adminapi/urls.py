@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 router.register('adminapi', views.AdminModelViewSet, basename = 'admin')
+router.register('issuebookadminapi', views.IssuedBookAdminModelViewSet, basename = 'admin')
 
 urlpatterns = [
 
