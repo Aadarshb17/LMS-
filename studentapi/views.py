@@ -12,7 +12,6 @@ class UserModelViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        breakpoint()
         return User.objects.filter(username=self.request.user)
 
     def get_permissions(self):
@@ -32,8 +31,9 @@ class UserModelViewSet(viewsets.ModelViewSet):
     # def perform_create(self, serializer):
     #     serializer.save(user=self.request.user)
 
-class StudentModelViewSet(viewsets.ModelViewSet):
+class IssuedBookModelViewSet(viewsets.ModelViewSet):
     #queryset = Student.objects.all()
+    serializer_class = IssuedBookSerializer
 
     def get_queryset(self):
         breakpoint()
@@ -41,11 +41,8 @@ class StudentModelViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
 
     def get_permissions(self):
-    
-        if self.action in ['update','partial_update','destroy','create']:
-            self.permission_classes = [IsAdminUser]
             
-        elif self.action in ['list']:
+        if self.action in ['list']:
             self.permission_classes = [IsAuthenticated]
 
         return super(self.__class__, self).get_permissions() 

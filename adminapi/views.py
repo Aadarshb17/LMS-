@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 
+from lmsapp.models import *
 from rest_framework import viewsets
 from . serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
@@ -20,10 +21,19 @@ class AdminModelViewSet(viewsets.ModelViewSet):
         return super(self.__class__, self).get_permissions()
 
 
+class IssuedBookAdminModelViewSet(viewsets.ModelViewSet):
+    queryset = IssuedBook.objects.all()
+    serializer_class = IssueBookAdminSerializer
 
-from rest_framework_simplejwt.views import TokenObtainPairView
+    def get_permissions(self):
+        if self.action in ['update','partial_update','destroy','list', 'create']:
+            self.permission_classes = [IsAdminUser]
+      
+        return super(self.__class__, self).get_permissions() 
+
+# from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 
-class AdminTokenObtainPairView(TokenObtainPairView):
-    serializer_class = AdminTokenObtainPairSerializer
+# class AdminTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = AdminTokenObtainPairSerializer
