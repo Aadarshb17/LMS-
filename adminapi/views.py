@@ -6,8 +6,6 @@ from rest_framework import viewsets
 from . serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
-
-
 class AdminModelViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminUserSerializer
@@ -22,15 +20,10 @@ class AdminModelViewSet(viewsets.ModelViewSet):
         return super(self.__class__, self).get_permissions()
 
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
-class AdminTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        return token
 
 class AdminTokenObtainPairView(TokenObtainPairView):
     serializer_class = AdminTokenObtainPairSerializer
