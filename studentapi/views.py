@@ -12,6 +12,7 @@ class UserModelViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_queryset(self):
+        breakpoint()
         return User.objects.filter(username=self.request.user)
 
     def get_permissions(self):
@@ -35,6 +36,7 @@ class StudentModelViewSet(viewsets.ModelViewSet):
     #queryset = Student.objects.all()
 
     def get_queryset(self):
+        breakpoint()
         return Student.objects.filter(user_id=self.request.user)
     serializer_class = StudentSerializer
 

@@ -3,12 +3,14 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import AdminSignupForm, BookForm, IssueBookForm
 from lmsapp.forms import ProfileUpdateForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, logout
 from django.contrib import messages
+from django.contrib.auth import login as user_login
 from lmsapp.models import Student, Book, IssuedBook, Fine
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+
 
 def admin_signup(request):
     if request.method == 'POST':
@@ -24,11 +26,14 @@ def admin_login(request):
     return render(request, 'lmsadmin/login.html')
 
 
-# def home(request):
-#     return render(request, 'lmsadmin/home.html')
+@login_required(login_url='admin_login')
+def home(request):
+    return render(request, 'lmsadmin/home.html', {'user': request.user})
 
 
 def login_page(request):
+    if request.user.is_authenticated:
+        return render(request, 'lmsadmin/home.html', {'user':user})
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password1')
@@ -36,8 +41,8 @@ def login_page(request):
         # breakpoint()
         #user1 = user.is_superuser
         if user and user.is_superuser:
-            login(request, user)
-            return render(request, 'lmsadmin/home.html', {'user':user})         
+            user_login(request, user)
+            return redirect('home')         
         elif not user:
             messages.info(request, 'Try again! username or password is incorrect')
     return render(request, 'lmsadmin/login.html')
