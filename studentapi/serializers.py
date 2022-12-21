@@ -25,18 +25,18 @@ class IssuedBookSerializer(serializers.ModelSerializer):
 
 
 
-class StudentSerializer(serializers.ModelSerializer):
-    issuedbook_set = IssuedBookSerializer(many=True, read_only= True)
+# class StudentSerializer(serializers.ModelSerializer):
+#     issuedbook_set = IssuedBookSerializer(many=True, read_only= True)
     
-    class Meta:
-        model = Student
-        fields = [
-            'course_id',
-            'mobile_number',
-            'roll_no',
-            'issuedbook_set',
+#     class Meta:
+#         model = Student
+#         fields = [
+#             'course_id',
+#             'mobile_number',
+#             'roll_no',
+#             'issuedbook_set',
             
-            ] 
+#             ] 
 
 
 class UserSerializer(serializers.ModelSerializer):

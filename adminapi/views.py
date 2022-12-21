@@ -21,9 +21,9 @@ class AdminModelViewSet(viewsets.ModelViewSet):
 
 
 
-from rest_framework_simplejwt.views import TokenObtainPairView
+# from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 
-class AdminTokenObtainPairView(TokenObtainPairView):
-    serializer_class = AdminTokenObtainPairSerializer
+# class AdminTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = AdminTokenObtainPairSerializer

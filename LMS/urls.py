@@ -26,5 +26,6 @@ urlpatterns = [
     path('', include('lmsapp.urls')),
     path('lmsadmin/', include('lmsadmin.urls')),
     path('', include('studentapi.urls')),
+    path('', include('adminapi.urls')),
 ]
 
