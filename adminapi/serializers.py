@@ -58,7 +58,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class FineBookAdminSerializer(serializers.ModelSerializer): 
     class Meta:
         model = Fine
@@ -80,11 +79,6 @@ class IssueBookAdminSerializer(serializers.ModelSerializer):
             'fine_set',
             ] 
     
-    def create(self, validated_data):
-        issuebook_data = validated_data.pop('fine_set')
-        issuebook = IssuedBook.objects.create(**validated_data)
-        return issuebook
-
 
     # def create(self, validated_data):
     #     admin_data = validated_data.pop('student')
