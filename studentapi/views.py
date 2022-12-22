@@ -1,14 +1,10 @@
 from django.shortcuts import render
-
-# Create your views here.
-
 from rest_framework import viewsets
 from . serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 
 class UserModelViewSet(viewsets.ModelViewSet):
-    #queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def get_queryset(self):
@@ -24,21 +20,12 @@ class UserModelViewSet(viewsets.ModelViewSet):
 
         return super(self.__class__, self).get_permissions()
 
-    # def create(self):
-    #     serializer = UserSerializer(request.data)
-    #     if serializer.is_valid():
-    #         perform_create(serializer)
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
 
 class IssuedBookModelViewSet(viewsets.ModelViewSet):
-    #queryset = Student.objects.all()
     serializer_class = IssuedBookSerializer
 
     def get_queryset(self):
-        breakpoint()
-        return Student.objects.filter(user_id=self.request.user)
-    serializer_class = StudentSerializer
+        return IssuedBook.objects.filter(roll_no__user_id=self.request.user)
 
     def get_permissions(self):
             
