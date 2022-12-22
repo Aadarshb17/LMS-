@@ -51,8 +51,8 @@ class IssuedBook(models.Model):
     issue_id = models.AutoField(primary_key=True)
     roll_no = models.ForeignKey(Student, on_delete=models.CASCADE)
     book_id = models.ForeignKey(Book, on_delete=models.CASCADE)
-    issue_date = models.DateField(default=datetime.datetime.now())
-    expiry_date = models.DateField(default=datetime.datetime.now()+datetime.timedelta(days=30))
+    issue_date = models.DateTimeField(default=datetime.datetime.now())
+    expiry_date = models.DateTimeField(default=datetime.datetime.now()+datetime.timedelta(days=30))
 
     def __str__(self):
         return f'{self.roll_no}------{self.book_id}'
