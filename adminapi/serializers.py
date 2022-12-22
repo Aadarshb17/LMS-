@@ -71,12 +71,31 @@ class IssueBookAdminSerializer(serializers.ModelSerializer):
     fine_set =  FineBookAdminSerializer(many=True, read_only= True)
     class Meta:
         model = IssuedBook
-        fields = [        
+        fields = [ 
+            'issue_id',       
             'book_id',
             'roll_no',
             'issue_date',
             'expiry_date',
             'fine_set',
+            ] 
+        extra_kwargs = {
+            'issue_date': {"required": False, "allow_null": True},
+            'expiry_date': {"required": False, "allow_null": True},
+            'fine_set': {"required": False, "allow_null": True},        
+        }
+
+class BookAdminSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Book
+        fields = [ 
+            'author_id',
+            'category_id',
+            'name',
+            'isbn_number',
+            'publication',
+            'price',
+            'quantity'
             ] 
     
 

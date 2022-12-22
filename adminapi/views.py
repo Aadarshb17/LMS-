@@ -24,12 +24,13 @@ class AdminModelViewSet(viewsets.ModelViewSet):
 class IssuedBookAdminModelViewSet(viewsets.ModelViewSet):
     queryset = IssuedBook.objects.all()
     serializer_class = IssueBookAdminSerializer
+    permission_classes = [IsAdminUser]
 
-    def get_permissions(self):
-        if self.action in ['update','partial_update','destroy','list', 'create']:
-            self.permission_classes = [IsAdminUser]
-      
-        return super(self.__class__, self).get_permissions() 
+
+class BookAdminModelViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookAdminSerializer
+    permission_classes = [IsAdminUser]
 
 # from rest_framework_simplejwt.views import TokenObtainPairView
 
