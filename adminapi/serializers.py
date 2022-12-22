@@ -95,7 +95,7 @@ class BookAdminSerializer(serializers.ModelSerializer):
             'isbn_number',
             'publication',
             'price',
-            'quantity'
+            'quantity',
             ] 
     
 
