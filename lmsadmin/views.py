@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 def admin_signup(request):
     if request.method == 'POST':
+       # breakpoint()
         form = AdminSignupForm(request.POST)
         if form.is_valid():
             form.save(request)
@@ -32,8 +33,7 @@ def home(request):
 
 
 def login_page(request):
-    if request.user.is_authenticated:
-        return render(request, 'lmsadmin/home.html', {'user':user})
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password1')

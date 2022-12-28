@@ -1,3 +1,164 @@
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.urls import reverse
+from .models import *
 
-# Create your tests here.
+
+
+# class SimpleTest(TestCase):
+#     def setUp(self):   
+#         self.username = 'aadarsh17'
+#         self.password = 'Am170106'
+#         self.user = get_user_model().objects.create_user(username=self.username, password=self.password)
+
+#     def test_login(self):
+#         self.client = Client()
+#         self.client.login(
+#             username='aadarsh17',
+#             password='Am170106'
+#             )
+#         response = self.client.post('/accounts/login')
+#         self.assertEqual(response.status_code, 200)
+
+
+# class TestForm(TestCase):
+#     def setUp(self):
+#         self.credentials = {
+#             'username': 'aadarshb06',
+#             'password': 'Aj06081701'
+#             }
+#         User.objects.create(**self.credentials)
+
+#     def test_login(self):
+#         breakpoint()
+#         self.client = Client()
+#         response = self.client.post('/lmsadmin/loginpage/', self.credentials)
+#         #breakpoint()
+#         print(response.context['user'])
+#         self.assertTrue(response.context['user'].is_active)
+
+
+# class SimpleLoginTest(TestCase):
+#     def setUp(self):
+#         user = User.objects.create_user(username='aadarsh17', email='aadarshb@gmail.com', password='Am170106')
+
+#     def test_valid_login(self):
+#         c = Client()
+#         c.login(username='aadarsh17', password='Am170106')
+#         response = c.post('/accounts/login', follow=True)
+#         user = User.objects.get(email='aadarshb@gmail.com')
+#         self.assertEqual(response.context['user'].email, user.email)
+
+#     def test_invalid_username(self):
+#         c = Client()
+#         c.login(username='aadarshb17k', password='Am170106')
+#         response = c.post('/lmsadmin/loginpage')
+#         self.assertTrue(response.context['user'].is_anonymous)
+
+#     def test_invalid_password(self):
+#         c = Client()
+#         c.login(username='aadarsh17', password='Am1701055608')
+#         response = c.get('/lmsadmin/adminlogin')
+#         self.assertTrue(response.context['user'].is_anonymous)
+
+#     def test_blank_username(self):
+#         c = Client()
+#         c.login(username='', password='')
+#         response = c.get('/lmsadmin/adminlogin')
+#         #breakpoint()
+#         self.assertTrue(response.context['user'].is_anonymous)
+
+class SignUpPageTests(TestCase):
+    def setUp(self):
+        self.username = 'testuser'
+        self.email = 'testuser@email.com'
+        self.password = 'adgsdfsafdhg143213'
+        self.first_name = 'anuj'
+        self.last_name = 'verma'
+        self.mobile_number = '6545646488'
+        self.course_id = "B.tech(CS)"
+        # user = User.objects.create_user(
+        #     username= self.username, 
+        #     email=self.email, 
+        #     password=self.password, 
+        #     first_name=self.first_name, 
+        #     last_name=self.last_name,      
+        #     )
+
+        course = Course.objects.create(
+            name = "B.tech(CS)"
+        )
+
+        # student = Student.objects.create(
+        #     mobile_number=self.mobile_number,
+        #     course_id=course,
+        #     user_id=user
+        #     )
+  
+    # def test_signup_page_url(self):
+    #     response = self.client.get('/accounts/signup', follow=True)
+    #     self.assertEqual(response.status_code, 200)
+
+    # def test_signup_page_name(self):
+    #     response = self.client.post(reverse('account_signup'))
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, template_name='account/signup.html')
+
+    def test_signup_form(self):
+        
+        response = self.client.post(reverse('account_signup'), data={
+            'username': self.username,
+            'email': self.email,
+            'first_name':self.first_name,
+            'last_name':self.last_name,
+            'mobile_number':self.mobile_number,
+            'course_id':self.course_id,
+            'password1': self.password,
+            'password2': self.password
+           
+        }
+        )
+        breakpoint() 
+        self.assertEqual(response.status_code, 200)    
+        #user = get_user_model().objects.all() 
+        # student = Student.objects.all() 
+        #self.assertEqual(user.count(), 1)
+        # self.assertEqual(student.count(), 1)
+
+#     def test_signup_page_invalid_url(self):
+#         response = self.client.get('/accountdgf/signupwe', follow=True)
+#         self.assertEqual(response.status_code, 404)
+#         #self.assertTemplateUsed(response, template_name='accounts/signup.html')
+
+#     def test_signup_invalid_form(self):
+#         response = self.client.post(reverse('account_signup'), data={
+#             'username': 'username',
+#             'email': 'awxgsgr@gmail.com',
+#             'password1': 'self.password',
+#             'password2': 'self.password',
+#             'first_name': 'self.first_name',
+#             'last_name': 'self.last_name',
+#             'mobile_number': 'self.mobile_number',
+#             'course_id':'self.course_id'
+#         }
+#         )
+#         breakpoint()
+#         self.assertEqual(response.status_code, 200)    
+#         user = get_user_model().objects.all() 
+#         self.assertEqual(user.count(), 1)
+
+
+# class UpdateProfileTest(TestCase):
+#     def setUp(self):
+#         user = User.objects.create_user(username='testuser', email='user@example.com', password='amj17010608')
+    
+#     def test_update_works(self):
+#         client = Client()
+#         #breakpoint()
+#         client.login(username='testuser', password='amj17010608')
+#         response = self.client.post('/editprofile', data = {
+#             'email': 'updated@example.com'
+#             })
+        
+#         self.assertEqual(response.context['user'].email, self.user.email)

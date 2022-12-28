@@ -28,9 +28,9 @@ class MyCustomSignupForm(SignupForm, ModelForm):
          
     def save(self, request):
         user = super(MyCustomSignupForm, self).save(request)
-         # breakpoint()
         mobile_number = self.cleaned_data.get('mobile_number')
         course_id = self.cleaned_data.get('course_id')
+        
         student = Student.objects.create(
             mobile_number=mobile_number, 
             course_id=course_id, 

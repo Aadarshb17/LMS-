@@ -84,6 +84,7 @@ def issued_book(request):
 
 
 def profile_edit(request):
+    #breakpoint()
     user = request.user
     student = Student.objects.get(user_id=user)
     if request.method == 'POST':
@@ -110,32 +111,3 @@ def delete_profile(request, id):
     student.user_id.delete()
     return HttpResponse("Successfully Deleted")
 
-
-# from rest_framework import viewsets
-# from . serializers import *
-# from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-# from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-# # Authentication and Permission
-
-# class StudentModelViewSet(viewsets.ModelViewSet):
-#     queryset = Student.objects.all()
-#     serializer_class = StudentSerializer
-#     # #authentication_classes = [JWTAuthentication]
-#     # authentication_classes = [SessionAuthentication]
-#     # # authentication_classes = [BasicAuthentication]
-#     # permission_classes = [IsAuthenticated]
-#     # #permission_classes = [AllowAny]
-#     # #permission_classes = [IsAdminUser]
-
-# class UserModelViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-
-# class IssuedBookModelViewSet(viewsets.ModelViewSet):
-#     queryset = IssuedBook.objects.all()
-#     serializer_class = IssuedbookSerializer
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
