@@ -71,13 +71,13 @@ from .models import *
 
 class SignUpPageTests(TestCase):
     def setUp(self):
-        self.username = 'testuser'
-        self.email = 'testuser@email.com'
-        self.password = 'adgsdfsafdhg143213'
+        self.username = 'test12user'
+        self.email = 'test12user@email.com'
+        self.password = 'adgsaswefdhg143213'
         self.first_name = 'anuj'
         self.last_name = 'verma'
         self.mobile_number = '6545646488'
-        self.course_id = "B.tech(CS)"
+        # self.course_id = "B.tech(CS)"
         # user = User.objects.create_user(
         #     username= self.username, 
         #     email=self.email, 
@@ -85,10 +85,8 @@ class SignUpPageTests(TestCase):
         #     first_name=self.first_name, 
         #     last_name=self.last_name,      
         #     )
-
-        course = Course.objects.create(
-            name = "B.tech(CS)"
-        )
+        # breakpoint()
+        self.course_id = Course.objects.create(name='btech').course_id
 
         # student = Student.objects.create(
         #     mobile_number=self.mobile_number,
@@ -96,14 +94,14 @@ class SignUpPageTests(TestCase):
         #     user_id=user
         #     )
   
-    # def test_signup_page_url(self):
-    #     response = self.client.get('/accounts/signup', follow=True)
-    #     self.assertEqual(response.status_code, 200)
+    def test_signup_page_url(self):
+        response = self.client.get('/accounts/signup', follow=True)
+        self.assertEqual(response.status_code, 200)
 
-    # def test_signup_page_name(self):
-    #     response = self.client.post(reverse('account_signup'))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, template_name='account/signup.html')
+    def test_signup_page_name(self):
+        response = self.client.post(reverse('account_signup'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, template_name='account/signup.html')
 
     def test_signup_form(self):
         
@@ -119,46 +117,57 @@ class SignUpPageTests(TestCase):
            
         }
         )
-        breakpoint() 
+        self.assertEqual(response.status_code, 302)    
+        user = get_user_model().objects.all() 
+        student = Student.objects.all() 
+        self.assertEqual(user.count(), 1)
+        self.assertEqual(student.count(), 1)
+
+    def test_signup_page_invalid_url(self):
+        response = self.client.get('/accountdgf/signupwe', follow=True)
+        self.assertEqual(response.status_code, 404)
+        #self.assertTemplateUsed(response, template_name='accounts/signup.html')
+
+    def test_signup_invalid_form(self):
+        response = self.client.post(reverse('account_signup'), data={
+            'username': 'username',
+            'email': 'awxgsgr@gmail.com',
+            'password1': 'self.password',
+            'password2': 'self.password',
+            'first_name': 'self.first_name',
+            'last_name': 'self.last_name',
+            'mobile_number': '5775575737',
+            
+        }
+        )
+       
         self.assertEqual(response.status_code, 200)    
-        #user = get_user_model().objects.all() 
-        # student = Student.objects.all() 
-        #self.assertEqual(user.count(), 1)
-        # self.assertEqual(student.count(), 1)
-
-#     def test_signup_page_invalid_url(self):
-#         response = self.client.get('/accountdgf/signupwe', follow=True)
-#         self.assertEqual(response.status_code, 404)
-#         #self.assertTemplateUsed(response, template_name='accounts/signup.html')
-
-#     def test_signup_invalid_form(self):
-#         response = self.client.post(reverse('account_signup'), data={
-#             'username': 'username',
-#             'email': 'awxgsgr@gmail.com',
-#             'password1': 'self.password',
-#             'password2': 'self.password',
-#             'first_name': 'self.first_name',
-#             'last_name': 'self.last_name',
-#             'mobile_number': 'self.mobile_number',
-#             'course_id':'self.course_id'
-#         }
-#         )
-#         breakpoint()
-#         self.assertEqual(response.status_code, 200)    
-#         user = get_user_model().objects.all() 
-#         self.assertEqual(user.count(), 1)
+        user = get_user_model().objects.all() 
+        self.assertEqual(user.count(), 0)
 
 
-# class UpdateProfileTest(TestCase):
-#     def setUp(self):
-#         user = User.objects.create_user(username='testuser', email='user@example.com', password='amj17010608')
-    
-#     def test_update_works(self):
-#         client = Client()
-#         #breakpoint()
-#         client.login(username='testuser', password='amj17010608')
-#         response = self.client.post('/editprofile', data = {
-#             'email': 'updated@example.com'
-#             })
+class UpdateProfileTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='user@example.com', password='amj17010608')
+        self.course = Course.objects.create(name='btech')
+        Student.objects.create(
+            user_id=self.user, 
+            course_id=self.course, 
+            mobile_number='9875646546'
+            )
+        self.client = Client()
+
+    def test_update_profile(self):
         
-#         self.assertEqual(response.context['user'].email, self.user.email)
+        self.client.login(username='testuser', password='amj17010608')
+        response = self.client.post(reverse('profile_edit'), data = {
+            'email': 'updated@example.com',
+            'username': 'username',
+            'password1': 'self.password',
+            'password2': 'self.password',
+            'first_name': 'self.first_name',
+            'last_name': 'self.last_name',
+            'mobile_number': '8785454465',
+            'course_id':"M.tech"
+            })
+        self.assertEqual(response.context['user'].email, self.user.email)
