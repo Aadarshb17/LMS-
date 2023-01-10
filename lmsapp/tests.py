@@ -141,7 +141,31 @@ class SignUpPageTests(TestCase):
            
         }
         )
-        
+
+        self.assertEqual(response.status_code, 302)    
+        user = get_user_model().objects.all() 
+        student = Student.objects.all() 
+        self.assertEqual(user.count(), 1)
+        self.assertEqual(student.count(), 1)
+
+    def test_signup_page_invalid_url(self):
+        response = self.client.get('/accountdgf/signupwe', follow=True)
+        self.assertEqual(response.status_code, 404)
+        #self.assertTemplateUsed(response, template_name='accounts/signup.html')
+
+    def test_signup_invalid_form(self):
+        response = self.client.post(reverse('account_signup'), data={
+            'username': 'username',
+            'email': 'awxgsgr@gmail.com',
+            'password1': 'self.password',
+            'password2': 'self.password',
+            'first_name': 'self.first_name',
+            'last_name': 'self.last_name',
+            'mobile_number': '5775575737',
+            
+        }
+        )
+       
         self.assertEqual(response.status_code, 200)    
         user = get_user_model().objects.all() 
         self.assertEqual(user.count(), 0)
@@ -170,3 +194,4 @@ class UpdateProfileTest(TestCase):
         is_user = User.objects.filter(email='updated@example.com')
         self.assertTrue(is_user)
         self.assertEqual(response.content, b'<h1>Successfully Update</h1>')
+
