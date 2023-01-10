@@ -5,6 +5,10 @@ from django.views.generic import DetailView
 from .forms import StudentForm, ProfileUpdateForm
 from .models import Student, IssuedBook, Fine
 from django.contrib.auth.models import User 
+from LMS.settings import RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum
 
 # Create your views here.
 def index(request):
@@ -64,17 +68,52 @@ class Profile(DetailView):
 
 def issued_book(request):
     user = request.user
-    #issued_book= IssuedBook.objects.filter(roll_no__user_id=user)
-    fine= IssuedBook.objects.filter(roll_no__user_id=user).values(
+    student = Student.objects.get(user_id=user)
+    issued_books = IssuedBook.objects.filter(roll_no__user_id=user)
+    issued_book_data= issued_books.values(
         'issue_id', 
         'fine__fine_id', 
         'fine__fine_date', 
         'fine__fine_amount', 
         'issue_date', 
         'expiry_date', 
-        'book_id__name'
+        'book_id__name',
         )
-    return render(request, 'issuedbook.html', {'fine':fine})
+    #breakpoint()
+    if issued_books.filter(fine__fine_amount__isnull=False):
+    
+        client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+        #breakpoint()
+        fine_amount = issued_books.filter(fine__fine_amount__isnull=False).aggregate(amount=Sum(
+            'fine__fine_amount'
+            ) * 100
+            )
+        #breakpoint()
+        book_fine_amount = fine_amount.get('amount')                                                                                                            ,                             
+        currency = 'INR'
+            
+        payment_order = client.order.create(
+            dict(
+                amount=book_fine_amount[0],
+                currency=currency,
+                payment_capture=1
+                )
+            )
+        #breakpoint()
+        payment_order_id = payment_order['id']
+
+        #fine_data = issued_books.values('fine__fine_id')
+
+        context = {
+            'mobile':student.mobile_number,
+            # 'fine_id' : fine_data[0]['fine__fine_id'],
+            'amount': book_fine_amount[0],
+            'api_key': RAZORPAY_API_KEY,
+            'order_id': payment_order_id
+        }
+    
+        return render(request, 'issuedbook.html', {'issued_book_data':issued_book_data, 'context':context})
+    return render(request, 'issuedbook.html', {'issued_book_data':issued_book_data})
 
 
 # def fine(request):
@@ -84,7 +123,6 @@ def issued_book(request):
 
 
 def profile_edit(request):
-    #breakpoint()
     user = request.user
     student = Student.objects.get(user_id=user)
     if request.method == 'POST':
@@ -92,7 +130,6 @@ def profile_edit(request):
         if form.is_valid():
             form.save()
             return HttpResponse('<h1>Successfully Update</h1>')
-
     else:
         form = ProfileUpdateForm(initial={
                   'username': user.username,
@@ -110,4 +147,53 @@ def delete_profile(request, id):
     student = Student.objects.get(pk=id)
     student.user_id.delete()
     return HttpResponse("Successfully Deleted")
+ 
+ 
+@csrf_exempt
+def handler(request, id):
+    # breakpoint()
+    if request.POST.get('error[code]') is not None:
+        return HttpResponse("payment failed")
+    payment_id = request.POST.get("razorpay_payment_id", "")
+    order_id = request.POST.get("razorpay_order_id", "")
+    signature = request.POST.get("razorpay_signature", "")
+    print(payment_id, order_id, signature)
+    # fine = Fine.objects.get(pk=id)
+    # fine.delete()
+    return HttpResponse('<h1>Payment Successfull</h1>')
 
+
+# client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+# def fine_pay(request):
+#     order_amount = 50000
+#     order_currency = 'INR'
+
+#     payment_order = client.order.create(
+#         dict(
+#             amount=order_amount,
+#             currency=order_currency,
+#             payment_capture=1
+#             )
+#         )
+#     payment_order_id = payment_order['id']
+#     context = {
+#         'amount':500,
+#         'api_key': RAZORPAY_API_KEY,
+#         'order_id': payment_order_id
+#     }
+#     # response = HttpResponse('Hello world!')
+#     # response.set_cookie(key='name', value='my_value', samesite='None', secure=True)
+#     # return response
+
+#     return render(request, 'account/payment.html',context)
+
+# DATA = {
+#     "amount": 100,
+#     "currency": "INR",
+#     "receipt": "receipt#1",
+#     "notes": {
+#         "key1": "value3",
+#         "key2": "value2"
+#     }
+# }
+# client.order.create(data=DATA)

@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-sf5cm@6m(!==u@=fs4=wxs2(1_32s^9doj9mz2()ci*l)no#+m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 
 
 # Application definition
@@ -213,4 +218,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 
 }
+
+RAZORPAY_API_KEY = 'rzp_test_NScWsRsCFR4jzP'
+
+RAZORPAY_API_SECRET_KEY = '43DtleTQE7rRlCZcNLG7t8GV'
 

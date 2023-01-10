@@ -40,6 +40,8 @@ urlpatterns = [
     path('issuedbook', views.issued_book, name='issued_book'), 
     path('editprofile', views.profile_edit, name='profile_edit'),
     path('deleteprofile/<int:id>/', views.delete_profile, name='delete_profile'),
+    #path('payfine', views.fine_pay, name='fine_pay'),
+    path('handler/<int:id>/', views.handler, name='handler'),
     #path('fine', views.fine, name='fine'),
 
     # path('', include(router.urls)),
