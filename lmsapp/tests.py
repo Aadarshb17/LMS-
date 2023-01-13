@@ -2,8 +2,10 @@ from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.urls import reverse
-from .models import *
 
+from .models import *
+from unittest.mock import patch
+from lmsapp.views import razorpay_payment
 
 
 # class SimpleTest(TestCase):
@@ -180,8 +182,7 @@ class UpdateProfileTest(TestCase):
 
     def test_update_profile(self):
         course = Course.objects.create(name='mtech').course_id
-        self.client.login(username='testuser', password='amj17010608')
-        
+        self.client.login(username='testuser', password='amj17010608')     
         response = self.client.post(reverse('profile_edit'), data = {
             'username': 'username',
             'first_name': 'self.first_name',
@@ -194,4 +195,92 @@ class UpdateProfileTest(TestCase):
         is_user = User.objects.filter(email='updated@example.com')
         self.assertTrue(is_user)
         self.assertEqual(response.content, b'<h1>Successfully Update</h1>')
+
+
+from faker import Faker
+from django.contrib.auth.hashers import make_password
+import json
+import factory
+import random
+import datetime
+
+passw = Faker().password()
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+         
+    username = factory.Faker('user_name') 
+    email = factory.Faker('email')
+    password = factory.LazyFunction(lambda: make_password(passw))
+
+
+class CourseFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Course
+    
+    name = factory.Faker('name') 
+
+
+class AuthorFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Author
+    
+    name = factory.Faker('name') 
+
+
+class CategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Category
+    
+    category = factory.Faker('name')
+
+
+class BookFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Book
+    name = factory.Faker('name')
+    price = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+    quantity = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+    author_id = factory.SubFactory(AuthorFactory)
+    category_id = factory.SubFactory(CategoryFactory)
+    isbn_number = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+
+
+class IsssuedBookTest(TestCase):
+
+    def setUp(self):
+        self.user = UserFactory()
+        self.course = CourseFactory()
+        self.book = BookFactory()
+        #breakpoint()
+        student = Student.objects.create(user_id=self.user, course_id=self.course)
+        self.issue_book = IssuedBook.objects.create(roll_no=student, book_id=self.book)
+        fine = Fine.objects.create(issue_id= self.issue_book, fine_amount=100, fine_date=datetime.datetime.now())
+        self.client = Client()
+    
+    @patch('lmsapp.views.razorpay_payment')
+    def test_issued_book(self, mock_razorpay_payment):  
+        self.client.login(username=self.user.username, password=passw)
+        #breakpoint()    
+        mock_razorpay_payment.return_value = 100
+        response = self.client.get(reverse('issued_book'))
+
+        self.assertEqual(response.status_code, 200)
+        mock_razorpay_payment.assert_called_once()
+        
+        
+ 
+# class TestRazorpayPayment(TestCase):
+#     @patch("views.razorpay_payment")
+#     def test_razorpay_pay(mock_razorpay_payment):
+#         payment_order = client.order.create(
+#                     dict(
+#                         amount=50000,
+#                         currency="INR",
+#                         payment_capture=1
+#                         )
+#                     )
+#         payment_order_id = payment_order['id']
+
+
 

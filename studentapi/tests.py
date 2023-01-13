@@ -21,7 +21,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker('user_name')
     #pwd= factory.Faker('password')
     email = factory.Faker('email')
-    #password = factory.LazyFunction(lambda: make_password(passw))
+    password = factory.LazyFunction(lambda: make_password(passw))
  
  
     # @classmethod
@@ -36,13 +36,14 @@ class TokenTest(APITestCase):
         self.client = APIClient()
  
     def test_token_jwt(self):  
-        breakpoint()
+        #breakpoint()
         data = {
             'username': self.user.username, 
             'password': passw
         }
         
         response = self.client.post(reverse('token_obtain_pair'), data, format='json')
+        #breakpoint()
         self.token = response.content
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(self.token)

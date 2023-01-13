@@ -79,10 +79,8 @@ def issued_book(request):
         'expiry_date', 
         'book_id__name',
         )
-    #breakpoint()
-    if issued_books.filter(fine__fine_amount__isnull=False):
-    
-        client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+    # breakpoint()
+    if issued_books.filter(fine__fine_amount__isnull=False):  
         #breakpoint()
         fine_amount = issued_books.filter(fine__fine_amount__isnull=False).aggregate(amount=Sum(
             'fine__fine_amount'
@@ -90,32 +88,37 @@ def issued_book(request):
             )
         #breakpoint()
         book_fine_amount = fine_amount.get('amount')                                                                                                            ,                             
-        currency = 'INR'
-            
-        payment_order = client.order.create(
-            dict(
-                amount=book_fine_amount[0],
-                currency=currency,
-                payment_capture=1
-                )
-            )
-        #breakpoint()
-        payment_order_id = payment_order['id']
+        #  comment
+        payment_order_id = razorpay_payment(book_fine_amount)
 
         #fine_data = issued_books.values('fine__fine_id')
 
         context = {
             'mobile':student.mobile_number,
             # 'fine_id' : fine_data[0]['fine__fine_id'],
-            'amount': book_fine_amount[0],
+            'amount': book_fine_amount,
             'api_key': RAZORPAY_API_KEY,
             'order_id': payment_order_id
         }
+
+        
     
         return render(request, 'issuedbook.html', {'issued_book_data':issued_book_data, 'context':context})
     return render(request, 'issuedbook.html', {'issued_book_data':issued_book_data})
 
 
+def razorpay_payment(book_fine_amount):
+    client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+    currency = 'INR'
+    payment_order = client.order.create(
+                dict(
+                    amount=book_fine_amount[0],
+                    currency=currency,
+                    payment_capture=1
+                    )
+                )
+    payment_order_id = payment_order['id']
+    return payment_order_id
 # def fine(request):
 #     user = request.user
 #     fine= Fine.objects.filter(issue_id__roll_no__user_id=user)
@@ -148,9 +151,9 @@ def delete_profile(request, id):
     student.user_id.delete()
     return HttpResponse("Successfully Deleted")
  
- 
+
 @csrf_exempt
-def handler(request, id):
+def handler(request):
     # breakpoint()
     if request.POST.get('error[code]') is not None:
         return HttpResponse("payment failed")

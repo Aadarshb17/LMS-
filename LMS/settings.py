@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    
+    'rest_framework_swagger',
+    'drf_yasg',  
 ]
 
 MIDDLEWARE = [
@@ -194,7 +195,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
-    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    'USER_AUTHENTICATION_RULE':'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
@@ -217,6 +218,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 
+  
 }
 
 RAZORPAY_API_KEY = 'rzp_test_NScWsRsCFR4jzP'

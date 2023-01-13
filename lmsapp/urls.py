@@ -41,7 +41,8 @@ urlpatterns = [
     path('editprofile', views.profile_edit, name='profile_edit'),
     path('deleteprofile/<int:id>/', views.delete_profile, name='delete_profile'),
     #path('payfine', views.fine_pay, name='fine_pay'),
-    path('handler/<int:id>/', views.handler, name='handler'),
+    path('handler/', views.handler, name='handler'),
+    path('razorpaypayment', views.razorpay_payment, name='razorpay_payment'),
     #path('fine', views.fine, name='fine'),
 
     # path('', include(router.urls)),
