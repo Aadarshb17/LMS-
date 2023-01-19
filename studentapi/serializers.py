@@ -2,6 +2,7 @@ from rest_framework import serializers
 from lmsapp.models import *
 from django.contrib.auth.models import User
 
+
 class FineBookSerializer(serializers.ModelSerializer): 
     class Meta:
         model = Fine
@@ -21,23 +22,6 @@ class IssuedBookSerializer(serializers.ModelSerializer):
             'expiry_date',
             'fine_set',
             ] 
-
-
-
-
-# class StudentSerializer(serializers.ModelSerializer):
-#     issuedbook_set = IssuedBookSerializer(many=True, read_only= True)
-    
-#     class Meta:
-#         model = Student
-#         fields = [
-#             'course_id',
-#             'mobile_number',
-#             'roll_no',
-#             'issuedbook_set',
-            
-#             ] 
-
 
 class UserSerializer(serializers.ModelSerializer):
     
@@ -90,15 +74,5 @@ class UserSerializer(serializers.ModelSerializer):
         student.save()
         return instance
 
-# Register Serializer
-# class RegisterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('id', 'username', 'email', 'password')
-#         extra_kwargs = {'password': {'write_only': True}}
-
-#     def create(self, validated_data):
-#         user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-#         return user
 
  

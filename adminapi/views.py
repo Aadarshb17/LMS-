@@ -1,11 +1,11 @@
 from django.shortcuts import render
-
-# Create your views here.
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 
 from lmsapp.models import *
-from rest_framework import viewsets
-from . serializers import *
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+
+from .serializers import *
+
 
 class AdminModelViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

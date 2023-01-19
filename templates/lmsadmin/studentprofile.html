@@ -37,7 +37,7 @@
         <th>{{y.mobile_number}}</th> 
         <th>{{y.course_id__name}}</th> 
         <th><a href="{% url 'student_profile_edit' y.roll_no %}">Update Profile</a></th> 
-        <th><a href="{% url 'delete_profile' y.roll_no %}">Delete record</a></th> 
+        <th><a href="{% url 'DeleteProfile' y.roll_no %}">Delete record</a></th> 
         
     </tr>
     {% endfor %}

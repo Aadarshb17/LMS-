@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'rest_framework_swagger',
     'drf_yasg',  
+     
 ]
 
 MIDDLEWARE = [
@@ -157,7 +157,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 
-LOGIN_REDIRECT_URL = 'user_login'
+LOGIN_REDIRECT_URL = 'UserLogin'
 
 
 ACCOUNT_FORMS = {
@@ -225,3 +225,26 @@ RAZORPAY_API_KEY = 'rzp_test_NScWsRsCFR4jzP'
 
 RAZORPAY_API_SECRET_KEY = '43DtleTQE7rRlCZcNLG7t8GV'
 
+# SWAGGER_SETTINGS = {
+#    'USE_SESSION_AUTH': False,
+#    'SECURITY_DEFINATIONS':{
+#        "Auth Token eg [Bearer](JWT)":{
+#            "type":"apikey",
+#            "name":"Authorization",
+#            "in":"header"
+#         }
+#     }
+# }
+
+SWAGGER_ENABLE = True
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+}

@@ -1,8 +1,8 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
+
 from lmsadmin.models import *
 from lmsapp.models import *
-from django.contrib.auth.models import User
-
 
 # class AdminSerializer(serializers.ModelSerializer):
      

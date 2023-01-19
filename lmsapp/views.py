@@ -1,14 +1,19 @@
 import datetime
-from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import redirect, render
-from django.views.generic import DetailView
-from .forms import StudentForm, ProfileUpdateForm
-from .models import Student, IssuedBook, Fine
-from django.contrib.auth.models import User 
-from LMS.settings import RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY
+
 import razorpay
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import (DeleteView, DetailView, RedirectView,
+                                  TemplateView, View)
+
+from LMS.settings import RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY
+
+from .forms import ProfileUpdateForm, StudentForm
+from .models import Fine, IssuedBook, Student
+
 
 # Create your views here.
 def index(request):
@@ -31,22 +36,28 @@ def student_detail(request):
     return render(request, 'form.html', {'form': form})
 
 
-def home(request):
-    return render(request, 'home.html')
+# def home(request):
+#     return render(request, 'home.html')
 
-# def registration(request):
-#     return render(request, 'registration.html')
-
-# def signin(request):
-#     return render(request, 'signin.html')
-
-def user_login(request):
-    # import pdb;pdb.set_trace()
-    return render(request, 'login.html')
+class Home(TemplateView):
+    template_name = 'home.html'
 
 
-def user_logout(request):
-    return redirect('accounts/login')
+# def user_login(request):
+#     # import pdb;pdb.set_trace()
+#     return render(request, 'login.html')
+
+
+class UserLogin(TemplateView):
+    template_name = 'login.html'
+
+
+# def user_logout(request):
+#     return redirect('accounts/login')
+
+
+class UserLogout(RedirectView):
+    url = 'accounts/login'
 
 
 # def profile(request):
@@ -56,7 +67,6 @@ def user_logout(request):
 #     user = request.user
 #     student= Student.objects.get(user_id=user)
 #     return render(request, 'profile.html', {'student': student})
-
 
 
 class Profile(DetailView):
@@ -99,9 +109,7 @@ def issued_book(request):
             'amount': book_fine_amount,
             'api_key': RAZORPAY_API_KEY,
             'order_id': payment_order_id
-        }
-
-        
+        }       
     
         return render(request, 'issuedbook.html', {'issued_book_data':issued_book_data, 'context':context})
     return render(request, 'issuedbook.html', {'issued_book_data':issued_book_data})
@@ -119,38 +127,80 @@ def razorpay_payment(book_fine_amount):
                 )
     payment_order_id = payment_order['id']
     return payment_order_id
+
+
 # def fine(request):
 #     user = request.user
 #     fine= Fine.objects.filter(issue_id__roll_no__user_id=user)
 #     return render(request, 'fine.html', {'fine':fine})
 
 
-def profile_edit(request):
-    user = request.user
-    student = Student.objects.get(user_id=user)
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=user)
+# def profile_edit(request):
+#     user = request.user
+#     student = Student.objects.get(user_id=user)
+#     if request.method == 'POST':
+#         form = ProfileUpdateForm(request.POST, instance=user)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponse('<h1>Successfully Update</h1>')
+#     else:
+#         form = ProfileUpdateForm(initial={
+#                   'username': user.username,
+#                   'first_name' : user.first_name,
+#                   'last_name' : user.last_name,
+#                   'email' : user.email,
+#                   'mobile_number' : student.mobile_number,
+#                   'course_id' : student.course_id             
+#                   }
+#                   ) 
+#     return render(request, "account/studprofileupdate.html", {'form':form})
+
+
+class ProfileEdit(View):
+
+    template_name = "account/studprofileupdate.html"
+
+    def post(self, request):
+        form = ProfileUpdateForm(request.POST, instance=self.request.user)
         if form.is_valid():
             form.save()
             return HttpResponse('<h1>Successfully Update</h1>')
-    else:
-        form = ProfileUpdateForm(initial={
-                  'username': user.username,
-                  'first_name' : user.first_name,
-                  'last_name' : user.last_name,
-                  'email' : user.email,
+
+    def get(self, request):
+        user = request.user
+        student = Student.objects.get(user_id=self.request.user)
+        form = ProfileUpdateForm(instance=user, initial={
                   'mobile_number' : student.mobile_number,
                   'course_id' : student.course_id             
                   }
                   ) 
-    return render(request, "account/studprofileupdate.html", {'form':form})
+        return render(request, self.template_name, {'form':form})
 
 
-def delete_profile(request, id):
-    student = Student.objects.get(pk=id)
-    student.user_id.delete()
-    return HttpResponse("Successfully Deleted")
+# def delete_profile(request, id):
+#     student = Student.objects.get(pk=id)
+#     student.user_id.delete()
+#     return HttpResponse("Successfully Deleted")
  
+
+class DeleteProfile(DeleteView):
+
+    success_message = "Deleted Successfully"
+    model = Student
+    success_url = '/lmsadmin/home'
+    template_name = "student_confirm_delete.html"
+
+    # def get_queryset(self):
+    #     #breakpoint()
+    #     qs = super(DeleteProfile, self).get_queryset()
+    #     return qs
+   
+    # def get_object(self, queryset=None):
+    #      student = Student.objects.get(pk=id)
+    #      student.user_id.delete()
+        
+    #      obj = super(DeleteProfile, self).get_object()
+
 
 @csrf_exempt
 def handler(request):
@@ -165,38 +215,3 @@ def handler(request):
     # fine.delete()
     return HttpResponse('<h1>Payment Successfull</h1>')
 
-
-# client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
-# def fine_pay(request):
-#     order_amount = 50000
-#     order_currency = 'INR'
-
-#     payment_order = client.order.create(
-#         dict(
-#             amount=order_amount,
-#             currency=order_currency,
-#             payment_capture=1
-#             )
-#         )
-#     payment_order_id = payment_order['id']
-#     context = {
-#         'amount':500,
-#         'api_key': RAZORPAY_API_KEY,
-#         'order_id': payment_order_id
-#     }
-#     # response = HttpResponse('Hello world!')
-#     # response.set_cookie(key='name', value='my_value', samesite='None', secure=True)
-#     # return response
-
-#     return render(request, 'account/payment.html',context)
-
-# DATA = {
-#     "amount": 100,
-#     "currency": "INR",
-#     "receipt": "receipt#1",
-#     "notes": {
-#         "key1": "value3",
-#         "key2": "value2"
-#     }
-# }
-# client.order.create(data=DATA)

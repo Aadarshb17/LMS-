@@ -5,7 +5,7 @@
 <h1>Update Your Profile</h1>
 
 
-<form  method="post" >
+<form  method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Update</button>

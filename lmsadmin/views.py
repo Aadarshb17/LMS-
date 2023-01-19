@@ -1,15 +1,21 @@
 import datetime
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .forms import AdminSignupForm, BookForm, IssueBookForm
-from lmsapp.forms import ProfileUpdateForm
-from django.contrib.auth import authenticate, logout
+
 from django.contrib import messages
+from django.contrib.auth import authenticate
 from django.contrib.auth import login as user_login
-from lmsapp.models import Student, Book, IssuedBook, Fine
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.views.generic import (DeleteView, DetailView, RedirectView,
+                                  TemplateView, View)
+
+from lmsapp.forms import ProfileUpdateForm
+from lmsapp.models import Book, Fine, IssuedBook, Student
+
+from .forms import AdminSignupForm, BookForm, IssueBookForm
 
 
 def admin_signup(request):
@@ -54,6 +60,7 @@ def logout_page(request):
 
 @login_required(login_url='admin_login')
 def student_profile(request):   
+    page_no = 10
     student= Student.objects.values( 
             'roll_no', 
             'user_id__username', 
@@ -63,7 +70,7 @@ def student_profile(request):
             'mobile_number', 
             'course_id__name'
             )
-    paginator = Paginator(student, 10)
+    paginator = Paginator(student, page_no)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -82,16 +89,17 @@ def student_profile(request):
                     'mobile_number', 
                     'course_id__name'
                     )
-        paginator = Paginator(student, 10)
+        paginator = Paginator(student, page_no)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'lmsadmin/studentprofile.html', {'page_obj':page_obj})
     return render(request, 'lmsadmin/studentprofile.html', {'page_obj': page_obj})
 
 @login_required(login_url='admin_login')
-def view_book(request):  
+def view_book(request): 
+    page_no = 10 
     book= Book.objects.all()
-    paginator = Paginator(book, 10)
+    paginator = Paginator(book, page_no)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -104,7 +112,7 @@ def view_book(request):
                   Q(category_id__category__icontains=search_term)|
                   Q(publication__icontains=search_term)
                   )
-        paginator = Paginator(book, 10)
+        paginator = Paginator(book, page_no)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'lmsadmin/viewbook.html', {'page_obj':page_obj})    
@@ -112,6 +120,7 @@ def view_book(request):
 
 @login_required(login_url='admin_login')
 def view_issued_book(request):
+    page_no = 10
     issuedbook= IssuedBook.objects.all().values(
             'issue_id', 
             'fine__fine_id', 
@@ -123,7 +132,7 @@ def view_issued_book(request):
             'roll_no__course_id__name', 
             'roll_no__user_id__first_name'
             )
-    paginator = Paginator(issuedbook, 10)
+    paginator = Paginator(issuedbook, page_no)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     if 'search' in request.GET:
@@ -143,7 +152,7 @@ def view_issued_book(request):
                     'roll_no__course_id__name', 
                     'roll_no__user_id__first_name'
                     )
-        paginator = Paginator(issuedbook, 10)
+        paginator = Paginator(issuedbook, page_no)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'lmsadmin/viewissuedbook.html', {'page_obj':page_obj})
@@ -163,6 +172,7 @@ def book_form(request):
 
 def issue_book_form(request, id):
     book = Book.objects.get(pk=id)
+    #fine = Fine.objects.get(pk=id)
     if request.method == 'POST':
         form = IssueBookForm(request.POST)
         if form.is_valid():
@@ -172,7 +182,12 @@ def issue_book_form(request, id):
             # issued_book.expiry_date = datetime.datetime.now() + datetime.timedelta(days=30) 
             # issued_book.save()
             book.quantity = book.quantity - 1
-            book.save()        
+            book.save()   
+            # fine.fine_date =  datetime.datetime.now() 
+            # amount =  fine.fine_date - form.expiry_date
+            # fine.fine_amount = amount.days*5
+            # fine.save()
+
             return HttpResponse("Successfully Issued")
         
     else:
@@ -222,16 +237,7 @@ def book_update(request, id):
             form.save()
             return HttpResponse("successfully update")
     else:
-        form = BookForm(initial={
-            'author_id':book.author_id,
-            'category_id':book.category_id,
-            'name':book.name,
-            'isbn_number':book.isbn_number,
-            'publication':book.publication,
-            'price':book.price,
-            'quantity':book.quantity
-        }
-        )
+        form = BookForm(instance=book)
     return render(request, 'lmsadmin/bookform.html', {'form': form})
 
 
@@ -245,14 +251,29 @@ def student_profile_edit(request, id):
             return HttpResponse('<h1>Successfully Update</h1>')
 
     else:
-        form = ProfileUpdateForm(initial={
-                  'username': user.username,
-                  'first_name' : user.first_name,
-                  'last_name' : user.last_name,
-                  'email' : user.email,
+        form = ProfileUpdateForm(instance=user, initial={
                   'mobile_number' : student.mobile_number,
                   'course_id' : student.course_id             
                   }
                   ) 
     return render(request, "account/studprofileupdate.html", {'form':form})
+
+
+# def delete_profile(request, id):
+#     student = Student.objects.get(pk=id)
+#     student.user_id.delete()
+#     return HttpResponse("Successfully Deleted")
+ 
+
+class DeleteProfile(DeleteView):
+
+    model = Student 
+    success_url = '/lmsadmin/home'
+    template_name = "student_confirm_delete.html"
+
+    def get_queryset(self):
+        qs = super(DeleteProfile, self).get_queryset()
+        return qs.filter(user_id=self.request.user)
+
+
 
