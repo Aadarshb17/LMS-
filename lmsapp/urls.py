@@ -1,5 +1,4 @@
 """LMS URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
 Examples:
@@ -32,14 +31,19 @@ urlpatterns = [
     path('currentdatetime', views.currentdatetime, name='currentdatetime'),
     path('student_detail', views.student_detail, name='student_detail'),
     #path('registration', views.registration, name='registration'),
-    path('home', views.home, name='home'),
+    path('home', views.Home.as_view(), name='Home'),
     #path('signin', views.signin, name='signin'), 
-    path('login', views.user_login, name='user_login'), 
-    path('', views.user_logout, name='user_logout'), 
+    path('login', views.UserLogin.as_view(), name='UserLogin'), 
+    path('', views.UserLogout.as_view(), name='UserLogout'), 
     path('profile', views.Profile.as_view(), name='profile'), 
     path('issuedbook', views.issued_book, name='issued_book'), 
-    path('editprofile', views.profile_edit, name='profile_edit'),
-    path('deleteprofile/<int:id>/', views.delete_profile, name='delete_profile'),
+    #path('editprofile', views.profile_edit, name='profile_edit'),
+    path('editprofile', views.ProfileEdit.as_view(), name='profile_edit'), 
+    
+
+    #path('payfine', views.fine_pay, name='fine_pay'),
+    path('handler/', views.handler, name='handler'),
+    path('razorpaypayment', views.razorpay_payment, name='razorpay_payment'),
     #path('fine', views.fine, name='fine'),
 
     # path('', include(router.urls)),
@@ -48,5 +52,3 @@ urlpatterns = [
     # path('tokenrefresh', TokenRefreshView.as_view(), name='token_refresh'),
     # path('tokenverify', TokenVerifyView.as_view(), name='token_verify'),  
 ] 
-
-
